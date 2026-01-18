@@ -1,0 +1,32 @@
+name: Level 1 Autograding
+
+on: [push]
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Fetch full commit history
+
+      - name: Validate Level 1
+        run: |
+          set -e
+
+          echo "🔍 Checking hello.txt..."
+          if [ ! -f hello.txt ]; then
+            echo "❌ hello.txt not found"
+            exit 1
+          fi
+
+          echo "🔍 Checking commit history for message 'begin' (case-insensitive)..."
+          if ! git log --pretty=%B \
+              | tr '[:upper:]' '[:lower:]' \
+              | grep -Fxq "begin"; then
+            echo "❌ No commit with message 'begin' found (case-insensitive)"
+            exit 1
+          fi
+
+          echo "✅ LEVEL 1 PASSED"
